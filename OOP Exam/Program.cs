@@ -55,7 +55,30 @@
         }
     }
 
-
+    class FinalExam
+    {
+        public Question[] Questions;
+        public FinalExam(Question[] questions)
+        {
+            Questions = questions;
+        }
+        public void ShowExam()
+        {
+           foreach ( Question q in Questions)
+            {
+                q.Display();
+                Console.WriteLine();
+            }
+        }
+        public void Display()
+        {
+            foreach (var question in Questions)
+            {
+                question.Display();
+                Console.WriteLine();
+            }
+        }
+    }
 
     internal class Program
     {

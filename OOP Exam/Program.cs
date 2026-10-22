@@ -36,7 +36,26 @@
         }
     }
 
-  
+    class MCQQuestion : Question
+    {
+        public string[] Options;
+        public MCQQuestion(string header, string body, int mark, string[] options)
+            : base(header, body, mark)
+        {
+            Options = options;
+        }
+        public override void Display()
+        {
+            base.Display();
+            Console.WriteLine("Options:");
+            for (int i = 0; i < Options.Length; i++)
+            {
+                Console.WriteLine($"{i + 1}. {Options[i]}");
+            }
+        }
+    }
+
+
 
     internal class Program
     {

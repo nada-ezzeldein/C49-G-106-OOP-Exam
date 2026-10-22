@@ -80,6 +80,22 @@
         }
     }
 
+    class PracticalExam
+    {
+        public MCQQuestion[] Questions;
+        public PracticalExam(MCQQuestion[] questions)
+        {
+            Questions = questions;
+        }
+        public void ShowExam()
+        {
+            foreach (MCQQuestion q in Questions)
+            {
+                q.Display();
+                Console.WriteLine();
+            }
+        }
+    }
     internal class Program
     {
         static void Main(string[] args)

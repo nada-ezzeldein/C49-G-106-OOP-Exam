@@ -21,6 +21,21 @@
         }
     }
 
+    class TrueFalseQuestion : Question
+    {
+        public bool Answer;
+        public TrueFalseQuestion(string header, string body, int mark, bool answer)
+            : base(header, body, mark)
+        {
+            Answer = answer;
+        }
+        public override void Display()
+        {
+            base.Display();
+            Console.WriteLine($"Answer: {Answer}");
+        }
+    }
+
   
 
     internal class Program

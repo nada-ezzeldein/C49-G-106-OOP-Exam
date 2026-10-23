@@ -1,98 +1,157 @@
 ﻿namespace OOP_Exam
 {
-    class Question
+    public abstract class Question
     {
-        public string Header;
-        public string Body;
-        public int Mark;
-
-        public Question(string header, string body, int mark)
+        public string Header { get; set; }
+        public string Body { get; set; }
+        public int Mark { get; set; }
+        public Answer[] Answers { get; set; }
+        public Answer RightAnswer { get; set; }
+        public Question(string header, string body, int mark, Answer[] answers, Answer rightAnswer)
         {
             Header = header;
             Body = body;
             Mark = mark;
-        }   
-
-        public virtual void Display()
-        {
-            Console.WriteLine($"Header: {Header}");
-            Console.WriteLine($"Body: {Body}");
-            Console.WriteLine($"Mark: {Mark}");
+            Answers = answers;
+            RightAnswer = rightAnswer;
         }
+
+        public abstract void showQuestion();
+        
     }
 
     class TrueFalseQuestion : Question
     {
-        public bool Answer;
-        public TrueFalseQuestion(string header, string body, int mark, bool answer)
-            : base(header, body, mark)
+        public TrueFalseQuestion(string header, string body, int mark, Answer[] answers, Answer rightAnswer)
+            : base(header, body, mark, answers, rightAnswer)
         {
-            Answer = answer;
         }
-        public override void Display()
+        public override void showQuestion()
         {
-            base.Display();
-            Console.WriteLine($"Answer: {Answer}");
+            Console.WriteLine(Header);
+            Console.WriteLine(Body);
+            foreach (Answer answer in Answers)
+            {
+                Console.WriteLine($" {answer.AnswerID})  {answer.AnswerText}");
+            }
         }
     }
 
     class MCQQuestion : Question
     {
-        public string[] Options;
-        public MCQQuestion(string header, string body, int mark, string[] options)
-            : base(header, body, mark)
+        public MCQQuestion(string header, string body, int mark, Answer[] answers, Answer rightAnswer)
+            : base(header, body, mark, answers, rightAnswer)
         {
-            Options = options;
         }
-        public override void Display()
+        public override void showQuestion()
         {
-            base.Display();
-            Console.WriteLine("Options:");
-            for (int i = 0; i < Options.Length; i++)
+            Console.WriteLine(Header);
+            Console.WriteLine(Body);
+            foreach (Answer answer in Answers)
             {
-                Console.WriteLine($"{i + 1}. {Options[i]}");
+                Console.WriteLine($" {answer.AnswerID})  {answer.AnswerText}");
             }
         }
     }
 
-    class FinalExam
+   public abstract class Exam
     {
-        public Question[] Questions;
-        public FinalExam(Question[] questions)
+        public int Time { get; set; }
+        public int NumberOfQuestions { get; set; }
+        public Question[] Questions { get; set; }
+
+        public Exam(int time, int numberOfQuestions, Question[] questions)
         {
+            Time = time;
+            NumberOfQuestions = numberOfQuestions;
             Questions = questions;
         }
-        public void ShowExam()
+
+        public abstract void ShowExam();
+    }
+
+   public class FinalExam: Exam
+    {
+        public FinalExam(int time, int numberOfQuestions, Question[] questions): base(time, numberOfQuestions, questions)
         {
-           foreach ( Question q in Questions)
-            {
-                q.Display();
-                Console.WriteLine();
-            }
         }
-        public void Display()
+        public override void ShowExam()
         {
-            foreach (var question in Questions)
+            Console.WriteLine("Final Exam");
+            Console.WriteLine($"Exam Time: {Time} minutes");
+            Console.WriteLine($"Number of Questions: {NumberOfQuestions}");
+            Console.WriteLine();
+
+            int totalGrade = 0; 
+            foreach (Question question in Questions) 
             {
-                question.Display();
-                Console.WriteLine();
+                question.showQuestion(); 
+                Console.WriteLine($"Mark: {question.Mark}"); 
+                Console.WriteLine($"Right Answer: {question.RightAnswer.AnswerText}"); 
+                Console.WriteLine(); totalGrade += question.Mark; 
             }
+            Console.WriteLine($"Total Grade: {totalGrade}");
         }
     }
 
-    class PracticalExam
+   public class PracticalExam: Exam
     {
-        public MCQQuestion[] Questions;
-        public PracticalExam(MCQQuestion[] questions)
+        public PracticalExam(int time, int numberOfQuestions, Question[] questions): base(time, numberOfQuestions, questions)
         {
-            Questions = questions;
         }
-        public void ShowExam()
+        public override void ShowExam()
         {
-            foreach (MCQQuestion q in Questions)
+            Console.WriteLine("Practical Exam");
+            Console.WriteLine($"Exam Time: {Time} minutes"); 
+            Console.WriteLine($"Number of Questions: {NumberOfQuestions}"); 
+            Console.WriteLine();
+
+            foreach (Question question in Questions) {
+                question.showQuestion(); 
+                Console.WriteLine(); 
+            }
+
+            Console.WriteLine("RIGHT ANSWERS:"); 
+            foreach (Question question in Questions) 
             {
-                q.Display();
-                Console.WriteLine();
+                Console.WriteLine($"{question.Header}: {question.RightAnswer.AnswerText}");
+            }
+        }
+    }
+    
+   public class Answer
+    {
+       public int AnswerID { get; set;}
+       public string AnswerText { get; set; }
+       public Answer(int id , string text)
+        {
+            AnswerID = id;
+            AnswerText = text;
+        }
+    }
+
+    public class Subject
+    {
+        public int SubjectId { get; set; }
+        public string SubjectName { get; set; }
+        public Exam Exam { get; set; }
+        public Subject(int id, string name)
+        { 
+            SubjectId = id; SubjectName = name;
+        }
+        public void CreateExam(Exam exam) { 
+            Exam = exam; 
+        }
+
+        public void ShowSubjectExam() { 
+            Console.WriteLine($"Subject ID: {SubjectId}"); 
+            Console.WriteLine($"Subject Name: {SubjectName}"); 
+            if (Exam != null) 
+            { 
+                Exam.ShowExam();
+            }
+            else { 
+                Console.WriteLine("No exam has been created yet."); 
             }
         }
     }
@@ -100,7 +159,21 @@
     {
         static void Main(string[] args)
         {
-
+            Answer[] tfAnswers =
+                {
+                new Answer(1, "True"), new Answer(2, "False")
+            };
+            Answer[] mcqAnswers = 
+                {
+                new Answer(1, "Elhadaba"), new Answer(2, "El Ostora"), new Answer(3, "El gayar"), new Answer(4, "6767") 
+            };
+            Question q1 = new TrueFalseQuestion("Question 1", "Hl Yogad 7ob fe klb fesal?", 5, tfAnswers, tfAnswers[0]);
+            Question q2 = new MCQQuestion("Question 2", "Akl Ahmed Eltofa. Km Nesbet ElAmla7 fe Elba7r Elmotawaset?", 10, mcqAnswers, mcqAnswers[2]);
+            Question[] questions = { q1, q2 };
+            Subject subject = new Subject(1, "General Knowledge");
+            Exam finalExam = new FinalExam(60, questions.Length, questions);
+            subject.CreateExam(finalExam);
+            subject.ShowSubjectExam();
         }
     }
 }
